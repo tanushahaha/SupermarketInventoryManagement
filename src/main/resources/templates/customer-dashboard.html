@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Welcome, Customer!</h2>
+        <p>View available products and make orders.</p>
+
+        <h3>Available Items</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock Quantity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through items and display them -->
+                <tr th:each="item : ${items}">
+                    <td th:text="${item.name}"></td>
+                    <td th:text="${item.category}"></td>
+                    <td th:text="${item.price}"></td>
+                    <td th:text="${item.stockQuantity}"></td>
+                    <td>
+                        <input type="number" class="form-control quantity-input" min="1" th:max="${item.stockQuantity}" value="1">
+                        <button class="btn btn-primary add-to-cart" 
+                                th:data-item-id="${item.id}"
+                                th:data-item-name="${item.name}">
+                            Add to Cart
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="btn btn-success" onclick="viewCart()">View Cart</button>
+        <a href="/user/logout" class="btn btn-danger">Logout</a>
+
+        <div id="cart-modal" style="display:none;">
+            <h3>Your Cart</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items"></tbody>
+            </table>
+            <button class="btn btn-primary" onclick="checkout()">Checkout</button>
+            <button class="btn btn-secondary" onclick="closeCart()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+
+        $(".add-to-cart").click(function () {
+            let itemId = $(this).data("item-id");
+            let itemName = $(this).data("item-name");
+            let quantity = $(this).siblings(".quantity-input").val();
+
+            let existingItem = cart.find(item => item.id === itemId);
+            if (existingItem) {
+                existingItem.quantity += parseInt(quantity);
+            } else {
+                cart.push({ id: itemId, name: itemName, quantity: parseInt(quantity) });
+            }
+
+            alert(itemName + " added to cart!");
+        });
+
+        function viewCart() {
+            let cartTable = $("#cart-items");
+            cartTable.empty();
+
+            if (cart.length === 0) {
+                cartTable.append("<tr><td colspan='3'>Cart is empty</td></tr>");
+            } else {
+                cart.forEach(item => {
+                    cartTable.append(`<tr>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td><button class="btn btn-danger btn-sm" onclick="removeFromCart(${item.id})">Remove</button></td>
+                    </tr>`);
+                });
+            }
+
+            $("#cart-modal").show();
+        }
+
+        function removeFromCart(itemId) {
+            cart = cart.filter(item => item.id !== itemId);
+            viewCart();
+        }
+
+        function closeCart() {
+            $("#cart-modal").hide();
+        }
+
+        function checkout() {
+            $.ajax({
+                url: "/cart/checkout",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(cart),
+                success: function(response) {
+                    alert("Checkout successful!");
+                    cart = [];
+                    closeCart();
+                },
+                error: function(error) {
+                    alert("Checkout failed. Please try again.");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
