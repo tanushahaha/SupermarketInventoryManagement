@@ -1,4 +1,3 @@
-###Folder Structure
 supermarket-ims/
 │
 ├── src/
@@ -6,7 +5,7 @@ supermarket-ims/
 │       ├── java/
 │       │   └── com/
 │       │       └── supermarketims/
-│       │           ├── controller/
+│       │           ├── controller/               # All application controllers
 │       │           │   ├── AdminDashboardController.java
 │       │           │   ├── CustomerDashboardController.java
 │       │           │   ├── HomeController.java
@@ -17,9 +16,9 @@ supermarket-ims/
 │       │           │   ├── StaffDashboardController.java
 │       │           │   ├── StockOrderController.java
 │       │           │   ├── SupplierController.java
-│       │           │   └── UserController.java            
+│       │           │   └── UserController.java
 │       │           │
-│       │           ├── model/
+│       │           ├── model/                    # All entity classes
 │       │           │   ├── Cart.java
 │       │           │   ├── CartItem.java
 │       │           │   ├── Item.java
@@ -38,7 +37,7 @@ supermarket-ims/
 │       │           │   ├── User.java
 │       │           │   └── UserRole.java
 │       │           │
-│       │           ├── repository/
+│       │           ├── repository/               # Spring Data JPA repositories
 │       │           │   ├── CartRepository.java
 │       │           │   ├── InventoryRepository.java
 │       │           │   ├── OrderItemRepository.java
@@ -48,10 +47,10 @@ supermarket-ims/
 │       │           │   ├── SupplierRepository.java
 │       │           │   └── UserRepository.java
 │       │           │
-│       │           └── SupermarketImsApplication.java
+│       │           └── SupermarketImsApplication.java  # Main Spring Boot application
 │       │
 │       ├── resources/
-│       │   ├── templates/
+│       │   ├── templates/                        # HTML templates
 │       │   │   ├── admin-dashboard.html
 │       │   │   ├── checkout.html
 │       │   │   ├── customer-checkout.html
@@ -64,6 +63,7 @@ supermarket-ims/
 │       │   │   ├── stock_orders.html
 │       │   │   └── user_management.html
 │       │   │
-│       │   └── application.properties
+│       │   └── application.properties            # Spring Boot config file
 │
-└── pom.xml
+└── pom.xml                                        # Maven build file
+
