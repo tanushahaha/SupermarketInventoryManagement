@@ -1,3 +1,5 @@
+###Folder Structure
+```
 supermarket-ims/
 │
 ├── src/
@@ -66,3 +68,4 @@ supermarket-ims/
 │       │   └── application.properties            # Spring Boot config file
 │
 └── pom.xml                                        # Maven build file
+```
