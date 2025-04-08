@@ -48,7 +48,7 @@ supermarket-ims/
 │       │           │   └── UserRepository.java
 │       │           │
 │       │           └── SupermarketImsApplication.java  # Main Spring Boot application
-│       │
+│
 │       ├── resources/
 │       │   ├── templates/                        # HTML templates
 │       │   │   ├── admin-dashboard.html
@@ -66,4 +66,3 @@ supermarket-ims/
 │       │   └── application.properties            # Spring Boot config file
 │
 └── pom.xml                                        # Maven build file
-
