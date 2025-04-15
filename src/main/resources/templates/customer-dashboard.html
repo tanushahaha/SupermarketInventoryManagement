@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <style>
+        :root {
+            --light-mint: #E9F5DB;
+            --pale-sage: #CFE1B9;
+            --sage: #B5C99A;
+            --olive-sage: #97A97C;
+            --moss-green: #87986A;
+            --forest-green: #718355;
+        }
+        
+        body {
+            background-color: var(--light-mint);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            max-width: 960px;
+            padding-bottom: 40px;
+        }
+        
+        h2 {
+            color: var(--forest-green);
+            border-bottom: 2px solid var(--sage);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        h3 {
+            color: var(--moss-green);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        
+        .table thead {
+            background-color: var(--forest-green);
+            color: white;
+        }
+        
+        .table-bordered {
+            border-color: var(--sage);
+        }
+        
+        .table tbody tr:hover {
+            background-color: var(--pale-sage);
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--moss-green);
+            border-color: var(--forest-green);
+            margin-top: 5px;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--forest-green);
+            border-color: var(--forest-green);
+        }
+        
+        .btn-success {
+            background-color: var(--olive-sage);
+            border-color: var(--moss-green);
+        }
+        
+        .btn-success:hover {
+            background-color: var(--moss-green);
+            border-color: var(--forest-green);
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        
+        .quantity-input {
+            max-width: 80px;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        #cart-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 80%;
+            max-width: 600px;
+        }
+        
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        
+        .welcome-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--forest-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="welcome-card">
+            <h2><i class="fas fa-user-circle me-2"></i>Welcome, Customer!</h2>
+            <p>View available products and make orders.</p>
+        </div>
+
+        <h3><i class="fas fa-shopping-bag me-2"></i>Available Items</h3>
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-tag me-1"></i>Item Name</th>
+                            <th><i class="fas fa-layer-group me-1"></i>Category</th>
+                            <th><i class="fas fa-dollar-sign me-1"></i>Price</th>
+                            <th><i class="fas fa-cubes me-1"></i>Stock Quantity</th>
+                            <th><i class="fas fa-cart-plus me-1"></i>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Loop through items and display them -->
+                        <tr th:each="item : ${items}">
+                            <td th:text="${item.name}"></td>
+                            <td th:text="${item.category}"></td>
+                            <td th:text="${item.price}"></td>
+                            <td th:text="${item.stockQuantity}"></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <input type="number" class="form-control quantity-input me-2" min="1" th:max="${item.stockQuantity}" value="1">
+                                    <button class="btn btn-primary add-to-cart" 
+                                            th:data-item-id="${item.id}"
+                                            th:data-item-name="${item.name}">
+                                        <i class="fas fa-plus me-1"></i>Add
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-success" onclick="viewCart()">
+                <i class="fas fa-shopping-cart me-1"></i>View Cart
+            </button>
+            <a href="/user/logout" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt me-1"></i>Logout
+            </a>
+        </div>
+
+        <div id="cart-modal" style="display:none;">
+            <h3><i class="fas fa-shopping-cart me-2"></i>Your Cart</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items"></tbody>
+            </table>
+            <div class="d-flex justify-content-end gap-2 mt-3">
+                <button class="btn btn-secondary" onclick="closeCart()">
+                    <i class="fas fa-times me-1"></i>Close
+                </button>
+                <a href="/customer/checkout" class="btn btn-success" onclick="proceedToCheckout()">
+                    <i class="fas fa-check me-1"></i>Proceed to Checkout
+                </a>
+            </div>
+        </div>
+        <div class="modal-backdrop" id="modal-backdrop" style="display:none;" onclick="closeCart()"></div>
+    </div>
+
+    <script>
+        let cart = [];
+    
+        $(".add-to-cart").click(function () {
+            let itemId = $(this).data("item-id");
+            let itemName = $(this).data("item-name");
+            let quantity = parseInt($(this).parent().find(".quantity-input").val());
+    
+            let existingItem = cart.find(item => item.itemId === itemId);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({ itemId: itemId, name: itemName, quantity: quantity });
+            }
+    
+            // Create toast notification instead of alert
+            const toast = document.createElement('div');
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.right = '20px';
+            toast.style.backgroundColor = '#87986A';
+            toast.style.color = 'white';
+            toast.style.padding = '10px 20px';
+            toast.style.borderRadius = '4px';
+            toast.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            toast.style.zIndex = '1001';
+            toast.innerHTML = `<i class="fas fa-check-circle me-2"></i>${itemName} added to cart!`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s';
+                setTimeout(() => document.body.removeChild(toast), 500);
+            }, 2000);
+        });
+    
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                alert("🛒 Cart is empty!");
+                return false;
+            }
+    
+            const cartJson = JSON.stringify(cart);
+    
+            $.post("/customer/checkout", { cartJson: cartJson }, function () {
+                window.location.href = "/customer/checkout";
+            }).fail(function () {
+                alert("❌ Checkout failed.");
+            });
+            return false;
+        }
+    
+        function viewCart() {
+            let cartTable = $("#cart-items");
+            cartTable.empty();
+    
+            if (cart.length === 0) {
+                cartTable.append("<tr><td colspan='3' class='text-center'>Your cart is empty</td></tr>");
+            } else {
+                cart.forEach((item, index) => {
+                    cartTable.append(`<tr>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td><button class="btn btn-danger btn-sm" onclick="removeFromCart(${index})"><i class="fas fa-trash me-1"></i>Remove</button></td>
+                    </tr>`);
+                });
+            }
+    
+            $("#cart-modal").show();
+            $("#modal-backdrop").show();
+        }
+    
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            viewCart();
+        }
+    
+        function closeCart() {
+            $("#cart-modal").hide();
+            $("#modal-backdrop").hide();
+        }
+    </script>
+</body>
+</html>
