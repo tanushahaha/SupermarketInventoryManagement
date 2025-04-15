@@ -12,6 +12,8 @@ supermarket-ims/
 │       │           ├── repository/               # Spring Data JPA repositories
 │       │           └── SupermarketImsApplication.java  # Main Spring Boot application
 │       ├── resources/
+│       │   ├── static/
+│       │       └── images/                                 
 │       │   ├── templates/                        # HTML templates
 │       │   └── application.properties            # Spring Boot config file
 │
